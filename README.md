@@ -37,3 +37,5 @@ I want to build a data model to record a list of client organizations with the b
 * Each person can have a different home, work and/or mailing addresses
 * Each person can have different contact details which can be a landline number or mobile number or email address
 
+### Step 2.1
+Can you change the model to use GUID as primary keys?

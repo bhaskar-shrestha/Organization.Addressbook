@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
@@ -11,9 +12,9 @@ namespace Organization.Addressbook.Tests
         [Test]
         public void Contact_Assigns_Properties()
         {
-            var c = new Models.Contact { Id = 1, FirstName = "John", LastName = "Doe", Email = "j@example.com" };
+            var c = new Models.Contact { FirstName = "John", LastName = "Doe", Email = "j@example.com" };
             Assert.AreEqual("John", c.FirstName);
-            Assert.AreEqual(1, c.Id);
+            Assert.AreNotEqual(Guid.Empty, c.Id);
         }
 
         [Test]

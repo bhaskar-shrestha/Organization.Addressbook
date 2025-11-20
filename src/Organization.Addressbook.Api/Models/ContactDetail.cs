@@ -1,3 +1,5 @@
+using System;
+
 namespace Organization.Addressbook.Api.Models
 {
     public enum ContactType
@@ -9,15 +11,15 @@ namespace Organization.Addressbook.Api.Models
 
     public class ContactDetail
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
         public ContactType Type { get; set; }
         public string? Value { get; set; }
 
         // optional relations
-        public int? OrganizationBranchId { get; set; }
+        public Guid? OrganizationBranchId { get; set; }
         public OrganizationBranch? OrganizationBranch { get; set; }
 
-        public int? PersonId { get; set; }
+        public Guid? PersonId { get; set; }
         public Person? Person { get; set; }
     }
 }
