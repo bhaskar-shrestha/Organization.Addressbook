@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Organization.Addressbook.Api.Models
 {
     public class Organization
     {
+        [Key]
         public Guid Id { get; set; } = Guid.NewGuid();
         public string? Name { get; set; }
 

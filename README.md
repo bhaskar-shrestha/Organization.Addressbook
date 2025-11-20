@@ -39,3 +39,6 @@ I want to build a data model to record a list of client organizations with the b
 
 ### Step 2.1
 Can you change the model to use GUID as primary keys?
+
+### Step 2.2
+Can you add data annotation to define primary keys?

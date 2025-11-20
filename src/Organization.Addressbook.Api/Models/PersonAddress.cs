@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Organization.Addressbook.Api.Models
 {
@@ -11,6 +12,7 @@ namespace Organization.Addressbook.Api.Models
 
     public class PersonAddress
     {
+        [Key]
         public Guid Id { get; set; } = Guid.NewGuid();
         public PersonAddressType Type { get; set; }
 
