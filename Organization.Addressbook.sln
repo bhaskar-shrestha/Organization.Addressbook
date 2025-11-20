@@ -1,0 +1,24 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33424.178
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Organization.Addressbook.Api", "src\Organization.Addressbook.Api\Organization.Addressbook.Api.csproj", "{A8D7A0E9-1111-4F3B-8F1A-111111111111}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Organization.Addressbook.Tests", "tests\Organization.Addressbook.Tests\Organization.Addressbook.Tests.csproj", "{B9E8B1F3-2222-4A3B-9C22-222222222222}"
+EndProject
+Global
+    GlobalSection(SolutionConfigurationPlatforms) = preSolution
+        Debug|Any CPU = Debug|Any CPU
+        Release|Any CPU = Release|Any CPU
+    EndGlobalSection
+    GlobalSection(ProjectConfigurationPlatforms) = postSolution
+        {A8D7A0E9-1111-4F3B-8F1A-111111111111}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+        {A8D7A0E9-1111-4F3B-8F1A-111111111111}.Debug|Any CPU.Build.0 = Debug|Any CPU
+        {A8D7A0E9-1111-4F3B-8F1A-111111111111}.Release|Any CPU.ActiveCfg = Release|Any CPU
+        {A8D7A0E9-1111-4F3B-8F1A-111111111111}.Release|Any CPU.Build.0 = Release|Any CPU
+        {B9E8B1F3-2222-4A3B-9C22-222222222222}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+        {B9E8B1F3-2222-4A3B-9C22-222222222222}.Debug|Any CPU.Build.0 = Debug|Any CPU
+        {B9E8B1F3-2222-4A3B-9C22-222222222222}.Release|Any CPU.ActiveCfg = Release|Any CPU
+        {B9E8B1F3-2222-4A3B-9C22-222222222222}.Release|Any CPU.Build.0 = Release|Any CPU
+    EndGlobalSection
+EndGlobal
