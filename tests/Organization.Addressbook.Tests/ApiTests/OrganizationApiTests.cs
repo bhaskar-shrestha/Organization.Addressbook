@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
+using FluentAssertions;
 using Organization.Addressbook.Api.Data;
 using Models = Organization.Addressbook.Api.Models;
 using Dtos = Organization.Addressbook.Api.Dtos;
@@ -72,10 +73,10 @@ namespace Organization.Addressbook.Tests.ApiTests
             var dto = new Dtos.OrganizationCreateDto { Name = "Test Org", ACN = acn };
 
             var resp = await _client.PostAsJsonAsync("/api/organizations", dto);
-            Assert.AreEqual(System.Net.HttpStatusCode.Created, resp.StatusCode);
+            resp.StatusCode.Should().Be(System.Net.HttpStatusCode.Created);
 
             var created = await resp.Content.ReadFromJsonAsync<Dictionary<string, object>>();
-            Assert.IsNotNull(created);
+            created.Should().NotBeNull();
             // JSON serializer may use camelCase, accept either 'Id' or 'id'
             string idKey = created.ContainsKey("Id") ? "Id" : created.ContainsKey("id") ? "id" : throw new System.Collections.Generic.KeyNotFoundException("Id");
 
@@ -85,9 +86,9 @@ namespace Organization.Addressbook.Tests.ApiTests
             using var scope = _factory.Services.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<AddressBookContext>();
             var org = await db.Organizations.FindAsync(id);
-            Assert.IsNotNull(org);
-            Assert.AreEqual("Test Org", org.Name);
-            Assert.AreEqual(acn, org.ACN);
+            org.Should().NotBeNull();
+            org!.Name.Should().Be("Test Org");
+            org.ACN.Should().Be(acn);
         }
 
         [Test]
@@ -109,15 +110,15 @@ namespace Organization.Addressbook.Tests.ApiTests
             };
 
             var branchResp = await _client.PostAsJsonAsync($"/api/organizations/{orgId}/branches", branchDto);
-            Assert.AreEqual(System.Net.HttpStatusCode.Created, branchResp.StatusCode);
+            branchResp.StatusCode.Should().Be(System.Net.HttpStatusCode.Created);
 
             using var scope = _factory.Services.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<AddressBookContext>();
             var branch = db.OrganizationBranches.FirstOrDefault(b => b.OrganizationId == orgId && b.Name == "HQ");
-            Assert.IsNotNull(branch);
+            branch.Should().NotBeNull();
 
             var contacts = db.ContactDetails.Where(c => c.OrganizationBranchId == branch.Id).ToList();
-            Assert.IsTrue(contacts.Count >= 1);
+            contacts.Count.Should().BeGreaterThanOrEqualTo(1);
         }
     }
 }

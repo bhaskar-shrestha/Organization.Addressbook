@@ -10,11 +10,11 @@ namespace Organization.Addressbook.Api.Controllers
     [Route("api/[controller]")]
     public class OrganizationsController : ControllerBase
     {
-        private readonly AddressBookContext _db;
+        private readonly Services.IOrganizationService _orgService;
 
-        public OrganizationsController(AddressBookContext db)
+        public OrganizationsController(Services.IOrganizationService orgService)
         {
-            _db = db;
+            _orgService = orgService;
         }
 
         [HttpPost]
@@ -22,25 +22,23 @@ namespace Organization.Addressbook.Api.Controllers
         {
             if (!ModelState.IsValid) return ValidationProblem(ModelState);
 
-            var org = new Models.Organization
+            var result = await _orgService.CreateOrganizationAsync(dto);
+            if (!result.IsSuccess)
             {
-                Name = dto.Name,
-                ABN = dto.ABN,
-                ACN = dto.ACN
-            };
+                return Problem(detail: result.Error);
+            }
 
-            _db.Organizations.Add(org);
-            await _db.SaveChangesAsync();
-
+            var org = result.Value!;
             return CreatedAtAction(nameof(Get), new { id = org.Id }, new { org.Id, org.Name, org.ABN, org.ACN });
         }
 
         [HttpGet("{id}")]
-        public IActionResult Get(System.Guid id)
+        public async Task<IActionResult> Get(System.Guid id)
         {
-            var org = _db.Organizations.Find(id);
-            if (org == null) return NotFound();
-            return Ok(org);
+            var result = await _orgService.GetOrganizationAsync(id);
+            if (result.IsNotFound) return NotFound();
+            if (!result.IsSuccess) return Problem(detail: result.Error);
+            return Ok(result.Value);
         }
     }
 }
