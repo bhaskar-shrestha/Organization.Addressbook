@@ -25,7 +25,16 @@ Run tests:
 dotnet test
 ```
 
+
 The API exposes a sample endpoint at `GET /api/AddressBook`.
+
+## Database setup (PowerShell)
+
+To scaffold and apply the initial EF Core migration for SQLite, run:
+
+```powershell
+dotnet ef migrations add InitialCreate --project src\Organization.Addressbook.Api --startup-project src\Organization.Addressbook.Api; dotnet ef database update --project src\Organization.Addressbook.Api --startup-project src\Organization.Addressbook.Api
+```
 
 ## Step 2: Prompt used
 I want to build a data model to record a list of client organizations with the below specifications:
@@ -50,3 +59,11 @@ Can you add data annotation to define primary keys?
 * Implement ABN checksum validation (custom attribute) and unit tests for it
 * Add normalization (strip spaces/dashes) before storing for both ABN and ACN
 * Implement an AcnAttribute and tests
+
+### Step 3 (individual prompts)
+* Setup project to use SQLite Local Storage
+* Add EF Core migrations and a production database provider `(Auto added SQL Server references)`
+* dotnet add package Microsoft.EntityFrameworkCore.Design `Manual command`
+* Remove references to SQL Server
+* Create a PS command to do the migrations
+* Add this PS command to Readme.md
