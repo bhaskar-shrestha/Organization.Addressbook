@@ -1,8 +1,9 @@
 # Organization.Addressbook
 1 day challenge to build Backend for an organization address book using VS Code and Github CoPilot
 
-## Step 1: Prompt used
-create a solution with webapi project and a nunit test project
+``` 
+Steps are listed after the documentation created 
+```
 
 ## Solution layout
 
@@ -35,6 +36,24 @@ To scaffold and apply the initial EF Core migration for SQLite, run:
 ```powershell
 dotnet ef migrations add InitialCreate --project src\Organization.Addressbook.Api --startup-project src\Organization.Addressbook.Api; dotnet ef database update --project src\Organization.Addressbook.Api --startup-project src\Organization.Addressbook.Api
 ```
+
+## Swagger (Development only)
+
+- Swagger/OpenAPI documentation is enabled only in the Development environment.
+- When running the API locally in Development, open the browser to `http://localhost:<port>/swagger` or `https://localhost:<port>/swagger` to view the Swagger UI and try endpoints.
+- Start the API with:
+
+```bash
+dotnet run --project src\Organization.Addressbook.Api\Organization.Addressbook.Api.csproj
+```
+
+Replace `<port>` with the port printed by the application on startup (Kestrel will show HTTP/HTTPS URLs in the console).
+
+If you run the app with `ASPNETCORE_ENVIRONMENT=Development`, the Swagger UI will be available; it is intentionally not enabled for non-development environments.
+
+
+## Step 1: Prompt used
+create a solution with webapi project and a nunit test project
 
 ## Step 2: Prompt used
 I want to build a data model to record a list of client organizations with the below specifications:
@@ -85,17 +104,3 @@ Can you add data annotation to define primary keys?
 * I can see a lot of data mapping inside the service layer. Create a separate mapping layer to extract mapping logic
 * Commit and push
 
-
-## Swagger (Development only)
-
-- Swagger/OpenAPI documentation is enabled only in the Development environment.
-- When running the API locally in Development, open the browser to `http://localhost:<port>/swagger` or `https://localhost:<port>/swagger` to view the Swagger UI and try endpoints.
-- Start the API with:
-
-```bash
-dotnet run --project src\Organization.Addressbook.Api\Organization.Addressbook.Api.csproj
-```
-
-Replace `<port>` with the port printed by the application on startup (Kestrel will show HTTP/HTTPS URLs in the console).
-
-If you run the app with `ASPNETCORE_ENVIRONMENT=Development`, the Swagger UI will be available; it is intentionally not enabled for non-development environments.
