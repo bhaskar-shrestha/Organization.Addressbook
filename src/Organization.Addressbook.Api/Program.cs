@@ -19,6 +19,7 @@ builder.Services.AddSwaggerGen();
 // Register application services
 builder.Services.AddScoped<Organization.Addressbook.Api.Services.IOrganizationService, Organization.Addressbook.Api.Services.OrganizationService>();
 builder.Services.AddScoped<Organization.Addressbook.Api.Services.IBranchService, Organization.Addressbook.Api.Services.BranchService>();
+builder.Services.AddScoped<Organization.Addressbook.Api.Services.IPersonService, Organization.Addressbook.Api.Services.PersonService>();
 builder.Services.AddScoped<Organization.Addressbook.Api.Services.IMappingService, Organization.Addressbook.Api.Services.Mapping.MappingService>();
 
 var app = builder.Build();
