@@ -16,6 +16,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Register application services
+builder.Services.AddScoped<Organization.Addressbook.Api.Services.IOrganizationService, Organization.Addressbook.Api.Services.OrganizationService>();
+builder.Services.AddScoped<Organization.Addressbook.Api.Services.IBranchService, Organization.Addressbook.Api.Services.BranchService>();
+builder.Services.AddScoped<Organization.Addressbook.Api.Services.IMappingService, Organization.Addressbook.Api.Services.Mapping.MappingService>();
+
 var app = builder.Build();
 
 // Configure middleware and top-level route registrations

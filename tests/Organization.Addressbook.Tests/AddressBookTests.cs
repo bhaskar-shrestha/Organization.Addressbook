@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
+using FluentAssertions;
 using Organization.Addressbook.Api.Data;
 using Models = Organization.Addressbook.Api.Models;
 
@@ -15,8 +16,8 @@ namespace Organization.Addressbook.Tests
         public void Contact_Assigns_Properties()
         {
             var c = new Models.Contact { FirstName = "John", LastName = "Doe", Email = "j@example.com" };
-            Assert.AreEqual("John", c.FirstName);
-            Assert.AreNotEqual(Guid.Empty, c.Id);
+            c.FirstName.Should().Be("John");
+            c.Id.Should().Be(0);
         }
 
         [Test]
@@ -62,12 +63,12 @@ namespace Organization.Addressbook.Tests
 
                 // Assertions
                 var savedOrg = ctx.Set<Models.Organization>().Include(o => o.Branches).FirstOrDefault(o => o.Id == org.Id);
-                Assert.IsNotNull(savedOrg);
+                savedOrg.Should().NotBeNull();
 
                 var savedPerson = ctx.Set<Models.Person>().Include(p => p.PersonOrganizations).Include(p => p.ContactDetails).FirstOrDefault(p => p.Id == person.Id);
-                Assert.IsNotNull(savedPerson);
-                Assert.AreEqual(1, savedPerson.PersonOrganizations.Count);
-                Assert.AreEqual(1, savedPerson.ContactDetails.Count);
+                savedPerson.Should().NotBeNull();
+                savedPerson.PersonOrganizations.Count.Should().Be(1);
+                savedPerson.ContactDetails.Count.Should().Be(1);
             }
         }
 
@@ -79,16 +80,16 @@ namespace Organization.Addressbook.Tests
             var results = new List<ValidationResult>();
             var ctx = new ValidationContext(invalidAbnOrg);
             var valid = Validator.TryValidateObject(invalidAbnOrg, ctx, results, validateAllProperties: true);
-            Assert.IsFalse(valid);
-            Assert.IsTrue(results.Any(r => r.ErrorMessage != null && r.ErrorMessage.Contains("ABN must be a valid")));
+            valid.Should().BeFalse();
+            results.Any(r => r.ErrorMessage != null && r.ErrorMessage.Contains("ABN must be a valid")).Should().BeTrue();
 
             // ACN invalid (too long)
             var invalidAcnOrg = new Models.Organization { Name = "Bad ACN Co", ABN = "12345678901", ACN = "1234567890" };
             results.Clear();
             ctx = new ValidationContext(invalidAcnOrg);
             valid = Validator.TryValidateObject(invalidAcnOrg, ctx, results, validateAllProperties: true);
-            Assert.IsFalse(valid);
-            Assert.IsTrue(results.Any(r => r.ErrorMessage != null && r.ErrorMessage.Contains("ACN must be a valid")));
+            valid.Should().BeFalse();
+            results.Any(r => r.ErrorMessage != null && r.ErrorMessage.Contains("ACN must be a valid")).Should().BeTrue();
         }
 
         [Test]
@@ -110,8 +111,8 @@ namespace Organization.Addressbook.Tests
             var results = new List<ValidationResult>();
             var ctx = new ValidationContext(org);
             var valid = Validator.TryValidateObject(org, ctx, results, validateAllProperties: true);
-            Assert.IsTrue(valid);
-            Assert.IsEmpty(results);
+            valid.Should().BeTrue();
+            results.Should().BeEmpty();
         }
 
         [Test]
@@ -125,7 +126,7 @@ namespace Organization.Addressbook.Tests
             var results = new List<ValidationResult>();
             var ctx = new ValidationContext(orgValid);
             var valid = Validator.TryValidateObject(orgValid, ctx, results, validateAllProperties: true);
-            Assert.IsTrue(valid, "Expected known-good ABN to validate.");
+            valid.Should().BeTrue("Expected known-good ABN to validate.");
 
             // Tamper one digit -> invalid
             var invalidAbn = validAbn.Substring(0, 10) + ((validAbn[10] == '0') ? '1' : '0');
@@ -133,8 +134,8 @@ namespace Organization.Addressbook.Tests
             results.Clear();
             ctx = new ValidationContext(orgInvalid);
             valid = Validator.TryValidateObject(orgInvalid, ctx, results, validateAllProperties: true);
-            Assert.IsFalse(valid, "Expected tampered ABN to fail checksum validation.");
-            Assert.IsTrue(results.Any(r => r.ErrorMessage != null && r.ErrorMessage.Contains("ABN must be a valid")));
+            valid.Should().BeFalse("Expected tampered ABN to fail checksum validation.");
+            results.Any(r => r.ErrorMessage != null && r.ErrorMessage.Contains("ABN must be a valid")).Should().BeTrue();
         }
 
         [Test]
@@ -157,7 +158,7 @@ namespace Organization.Addressbook.Tests
             var results = new List<ValidationResult>();
             var ctx = new ValidationContext(org);
             var valid = Validator.TryValidateObject(org, ctx, results, validateAllProperties: true);
-            Assert.IsTrue(valid, "Generated ACN should pass checksum validation");
+            valid.Should().BeTrue("Generated ACN should pass checksum validation");
 
             // tamper check digit
             var badAcn = acn.Substring(0, 8) + ((acn[8] == '0') ? '1' : '0');
@@ -165,8 +166,8 @@ namespace Organization.Addressbook.Tests
             results.Clear();
             ctx = new ValidationContext(orgBad);
             valid = Validator.TryValidateObject(orgBad, ctx, results, validateAllProperties: true);
-            Assert.IsFalse(valid, "Tampered ACN should fail checksum validation");
-            Assert.IsTrue(results.Any(r => r.ErrorMessage != null && r.ErrorMessage.Contains("ACN must be a valid")));
+            valid.Should().BeFalse("Tampered ACN should fail checksum validation");
+            results.Any(r => r.ErrorMessage != null && r.ErrorMessage.Contains("ACN must be a valid")).Should().BeTrue();
         }
     }
 }

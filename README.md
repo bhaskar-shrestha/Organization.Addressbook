@@ -68,14 +68,23 @@ Can you add data annotation to define primary keys?
 * Create a PS command to do the migrations
 * Add this PS command to Readme.md
 
-
+### Step 4 (individual prompts)
 * UI requires create organizations with name and abn or acn only. There is a separate form to add, edit or remove branches to the organization. The branch UI requires minimum 1 address and 1 contact detail.
 * Add API tests for these endpoints
 * Replace UseEndpoints in Program.cs with top-level route registrations
 * Commit and push
 * Add swagger for dev builds only
 * Update README.md with a brief note about how to access Swagger
+
+### Step 5 (individual prompts)
+* Create service interfaces and classes to move the logic from controller to the service layer
+* Refactor error handling to use a Result<T> pattern instead of exceptions
+* Add unit tests for the new service layer
+* Add mocking-based unit tests using Moq to test behavior without EF
+* Use FluentAssertions for nicer assertions 
+* I can see a lot of data mapping inside the service layer. Create a separate mapping layer to extract mapping logic
 * Commit and push
+
 
 ## Swagger (Development only)
 
