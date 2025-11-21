@@ -14,7 +14,11 @@ namespace Organization.Addressbook.Api.Models
     {
         [Key]
         public Guid Id { get; set; } = Guid.NewGuid();
+
         public ContactType Type { get; set; }
+
+        [Required]
+        [MaxLength(200)]
         public string? Value { get; set; }
 
         // optional relations

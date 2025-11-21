@@ -42,3 +42,11 @@ Can you change the model to use GUID as primary keys?
 
 ### Step 2.2
 Can you add data annotation to define primary keys?
+
+### Step 2.3 (individual prompts)
+* Add `[Required]`, `[MaxLength]`, or other validation attributes where appropriate.
+* Length of ABN is 11 and ACN is 9
+* Add tests that assert invalid ABN/ACN values are rejected by model validation?
+* Implement ABN checksum validation (custom attribute) and unit tests for it
+* Add normalization (strip spaces/dashes) before storing for both ABN and ACN
+* Implement an AcnAttribute and tests

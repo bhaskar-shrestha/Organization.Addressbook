@@ -12,6 +12,7 @@ namespace Organization.Addressbook.Api.Models
         public Guid OrganizationId { get; set; }
         public Organization? Organization { get; set; }
 
+        [MaxLength(100)]
         public string? Role { get; set; }
     }
 }

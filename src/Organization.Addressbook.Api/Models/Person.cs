@@ -8,7 +8,13 @@ namespace Organization.Addressbook.Api.Models
     {
         [Key]
         public Guid Id { get; set; } = Guid.NewGuid();
+
+        [Required]
+        [MaxLength(100)]
         public string? FirstName { get; set; }
+
+        [Required]
+        [MaxLength(100)]
         public string? LastName { get; set; }
 
         public ICollection<PersonAddress>? Addresses { get; set; }
