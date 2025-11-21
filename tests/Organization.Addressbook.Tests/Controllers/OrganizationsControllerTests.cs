@@ -94,6 +94,50 @@ namespace Organization.Addressbook.Tests.Controllers
 
             mockService.Verify(s => s.ListOrganizationsAsync("Acme", "111", "222"), Times.Once);
         }
+
+        [Test]
+        public async Task Search_ReturnsOk_WithResults()
+        {
+            var mockService = new Mock<IOrganizationService>();
+            var organizations = new List<OrganizationListDto>
+            {
+                new() { Id = Guid.NewGuid(), Name = "Acme Tech", ABN = "12345678901" }
+            };
+            mockService.Setup(s => s.SearchOrganizationsAsync(It.IsAny<string>()))
+                .ReturnsAsync(Result<List<OrganizationListDto>>.Success(organizations));
+
+            var controller = new OrganizationsController(mockService.Object);
+            var result = await controller.Search("Acme");
+
+            result.Should().BeOfType<OkObjectResult>();
+            var ok = (OkObjectResult)result;
+            ok.Value.Should().Be(organizations);
+        }
+
+        [Test]
+        public async Task Search_ReturnsBadRequest_WhenQueryIsEmpty()
+        {
+            var mockService = new Mock<IOrganizationService>();
+            var controller = new OrganizationsController(mockService.Object);
+            
+            var result = await controller.Search(null);
+
+            result.Should().BeOfType<BadRequestObjectResult>();
+        }
+
+        [Test]
+        public async Task Search_PassesQuery_ToService()
+        {
+            var mockService = new Mock<IOrganizationService>();
+            var organizations = new List<OrganizationListDto>();
+            mockService.Setup(s => s.SearchOrganizationsAsync(It.IsAny<string>()))
+                .ReturnsAsync(Result<List<OrganizationListDto>>.Success(organizations));
+
+            var controller = new OrganizationsController(mockService.Object);
+            await controller.Search("test123");
+
+            mockService.Verify(s => s.SearchOrganizationsAsync("test123"), Times.Once);
+        }
     }
 }
 

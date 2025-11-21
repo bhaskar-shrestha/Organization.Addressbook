@@ -112,3 +112,10 @@ Can you add data annotation to define primary keys?
     - Org Name
     - Org ABN
     - Org ACN
+* UI also has a search functionality. The search can either be name, abn or acn
+* All results should be ordered alphabetically by organization name
+* In UI, when you click on an organization, it should show a list of branches with:
+    - Branch Name
+    - One contact detail (landline, mobile and then email by preference)
+    - List of person in the branch (require id and name only)
+* Build failed in the last update

@@ -49,5 +49,25 @@ namespace Organization.Addressbook.Api.Controllers
             if (!result.IsSuccess) return Problem(detail: result.Error);
             return Ok(result.Value);
         }
+
+        [HttpGet("search")]
+        public async Task<IActionResult> Search([FromQuery] string? q)
+        {
+            if (string.IsNullOrWhiteSpace(q))
+                return BadRequest(new { error = "Search query (q) is required" });
+
+            var result = await _orgService.SearchOrganizationsAsync(q);
+            if (!result.IsSuccess) return Problem(detail: result.Error);
+            return Ok(result.Value);
+        }
+
+        [HttpGet("{id}/detail")]
+        public async Task<IActionResult> GetDetail(Guid id)
+        {
+            var result = await _orgService.GetOrganizationDetailAsync(id);
+            if (result.IsNotFound) return NotFound();
+            if (!result.IsSuccess) return Problem(detail: result.Error);
+            return Ok(result.Value);
+        }
     }
 }

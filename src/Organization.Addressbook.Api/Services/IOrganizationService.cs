@@ -11,5 +11,7 @@ namespace Organization.Addressbook.Api.Services
         Task<Result<Models.Organization>> CreateOrganizationAsync(OrganizationCreateDto dto);
         Task<Result<Models.Organization>> GetOrganizationAsync(Guid id);
         Task<Result<List<OrganizationListDto>>> ListOrganizationsAsync(string? nameFilter = null, string? abnFilter = null, string? acnFilter = null);
+        Task<Result<List<OrganizationListDto>>> SearchOrganizationsAsync(string query);
+        Task<Result<OrganizationDetailDto>> GetOrganizationDetailAsync(Guid id);
     }
 }
