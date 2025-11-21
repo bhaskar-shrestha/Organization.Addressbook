@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Organization.Addressbook.Api.Data;
 using Organization.Addressbook.Api.Dtos;
@@ -31,6 +33,32 @@ namespace Organization.Addressbook.Api.Services
             var org = _db.Organizations.Find(id);
             if (org == null) return Task.FromResult(Result<Models.Organization>.NotFound());
             return Task.FromResult(Result<Models.Organization>.Success(org));
+        }
+
+        public async Task<Result<List<OrganizationListDto>>> ListOrganizationsAsync(string? nameFilter = null, string? abnFilter = null, string? acnFilter = null)
+        {
+            var query = _db.Organizations.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(nameFilter))
+                query = query.Where(o => o.Name != null && o.Name.Contains(nameFilter));
+
+            if (!string.IsNullOrWhiteSpace(abnFilter))
+                query = query.Where(o => o.ABN != null && o.ABN.Contains(abnFilter));
+
+            if (!string.IsNullOrWhiteSpace(acnFilter))
+                query = query.Where(o => o.ACN != null && o.ACN.Contains(acnFilter));
+
+            var organizations = await System.Threading.Tasks.Task.FromResult(
+                query.Select(o => new OrganizationListDto
+                {
+                    Id = o.Id,
+                    Name = o.Name,
+                    ABN = o.ABN,
+                    ACN = o.ACN
+                }).ToList()
+            );
+
+            return Result<List<OrganizationListDto>>.Success(organizations);
         }
     }
 }

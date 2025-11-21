@@ -104,3 +104,11 @@ Can you add data annotation to define primary keys?
 * I can see a lot of data mapping inside the service layer. Create a separate mapping layer to extract mapping logic
 * Commit and push
 
+### Step 6 (individual prompts)
+* UI has a form to add a new person to the system and a separate form to attach the person to a branch
+
+### Step 7 (individual prompts)
+* UI has a page to list organizations with basic filters. The result requires to display:
+    - Org Name
+    - Org ABN
+    - Org ACN
