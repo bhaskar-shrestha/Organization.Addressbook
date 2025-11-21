@@ -8,6 +8,9 @@ namespace Organization.Addressbook.Api.Models
     {
         [Key]
         public Guid Id { get; set; } = Guid.NewGuid();
+
+        [Required]
+        [MaxLength(200)]
         public string? Name { get; set; }
 
         public Guid OrganizationId { get; set; }

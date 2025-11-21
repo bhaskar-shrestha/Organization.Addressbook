@@ -1,5 +1,7 @@
 using System;
 using System.Linq;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using Organization.Addressbook.Api.Data;
@@ -67,6 +69,104 @@ namespace Organization.Addressbook.Tests
                 Assert.AreEqual(1, savedPerson.PersonOrganizations.Count);
                 Assert.AreEqual(1, savedPerson.ContactDetails.Count);
             }
+        }
+
+        [Test]
+        public void Invalid_ABN_And_ACN_Fail_Validation()
+        {
+            // ABN invalid (too short)
+            var invalidAbnOrg = new Models.Organization { Name = "Bad ABN Co", ABN = "12345" };
+            var results = new List<ValidationResult>();
+            var ctx = new ValidationContext(invalidAbnOrg);
+            var valid = Validator.TryValidateObject(invalidAbnOrg, ctx, results, validateAllProperties: true);
+            Assert.IsFalse(valid);
+            Assert.IsTrue(results.Any(r => r.ErrorMessage != null && r.ErrorMessage.Contains("ABN must be a valid")));
+
+            // ACN invalid (too long)
+            var invalidAcnOrg = new Models.Organization { Name = "Bad ACN Co", ABN = "12345678901", ACN = "1234567890" };
+            results.Clear();
+            ctx = new ValidationContext(invalidAcnOrg);
+            valid = Validator.TryValidateObject(invalidAcnOrg, ctx, results, validateAllProperties: true);
+            Assert.IsFalse(valid);
+            Assert.IsTrue(results.Any(r => r.ErrorMessage != null && r.ErrorMessage.Contains("ACN must be a valid")));
+        }
+
+        [Test]
+        public void Valid_ABN_And_ACN_Pass_Validation()
+        {
+            // Use a known-valid ABN for checksum (constructed/example): 51824753556
+            // Generate a deterministic valid ACN for the test
+            var rnd = new Random(42);
+            int[] baseDigits = new int[8];
+            for (int i = 0; i < 8; i++) baseDigits[i] = rnd.Next(0, 10);
+            int[] weights = { 8, 7, 6, 5, 4, 3, 2, 1 };
+            int sum = 0;
+            for (int i = 0; i < 8; i++) sum += baseDigits[i] * weights[i];
+            int remainder = sum % 10;
+            int check = (10 - remainder) % 10;
+            var acn = string.Concat(baseDigits.Select(d => d.ToString())) + check.ToString();
+
+            var org = new Models.Organization { Name = "Good Co", ABN = "51824753556", ACN = acn };
+            var results = new List<ValidationResult>();
+            var ctx = new ValidationContext(org);
+            var valid = Validator.TryValidateObject(org, ctx, results, validateAllProperties: true);
+            Assert.IsTrue(valid);
+            Assert.IsEmpty(results);
+        }
+
+        [Test]
+        public void AbnChecksum_Validation_Works_For_Known_Good_And_Bad_Values()
+        {
+            // Known valid ABN examples (these are dummy numeric examples that satisfy checksum formula)
+            // We'll construct a valid ABN by finding digits that satisfy the checksum for test purposes.
+            // Use a simple valid ABN: 51824753556 (example often used in docs) -- but ensure checksum correct.
+            var validAbn = "51824753556";
+            var orgValid = new Models.Organization { Name = "Valid ABN Co", ABN = validAbn };
+            var results = new List<ValidationResult>();
+            var ctx = new ValidationContext(orgValid);
+            var valid = Validator.TryValidateObject(orgValid, ctx, results, validateAllProperties: true);
+            Assert.IsTrue(valid, "Expected known-good ABN to validate.");
+
+            // Tamper one digit -> invalid
+            var invalidAbn = validAbn.Substring(0, 10) + ((validAbn[10] == '0') ? '1' : '0');
+            var orgInvalid = new Models.Organization { Name = "Invalid ABN Co", ABN = invalidAbn };
+            results.Clear();
+            ctx = new ValidationContext(orgInvalid);
+            valid = Validator.TryValidateObject(orgInvalid, ctx, results, validateAllProperties: true);
+            Assert.IsFalse(valid, "Expected tampered ABN to fail checksum validation.");
+            Assert.IsTrue(results.Any(r => r.ErrorMessage != null && r.ErrorMessage.Contains("ABN must be a valid")));
+        }
+
+        [Test]
+        public void AcnChecksum_Validation_Works_For_Generated_Values()
+        {
+            // generate random 8-digit base and compute check digit
+            var rnd = new Random(12345);
+            int[] baseDigits = new int[8];
+            for (int i = 0; i < 8; i++) baseDigits[i] = rnd.Next(0, 10);
+
+            int[] weights = { 8, 7, 6, 5, 4, 3, 2, 1 };
+            int sum = 0;
+            for (int i = 0; i < 8; i++) sum += baseDigits[i] * weights[i];
+            int remainder = sum % 10;
+            int check = (10 - remainder) % 10;
+
+            var acn = string.Concat(baseDigits.Select(d => d.ToString())) + check.ToString();
+
+            var org = new Models.Organization { Name = "ACN Test Co", ABN = "51824753556", ACN = acn };
+            var results = new List<ValidationResult>();
+            var ctx = new ValidationContext(org);
+            var valid = Validator.TryValidateObject(org, ctx, results, validateAllProperties: true);
+            Assert.IsTrue(valid, "Generated ACN should pass checksum validation");
+
+            // tamper check digit
+            var badAcn = acn.Substring(0, 8) + ((acn[8] == '0') ? '1' : '0');
+            var orgBad = new Models.Organization { Name = "Bad ACN Co", ABN = "51824753556", ACN = badAcn };
+            results.Clear();
+            ctx = new ValidationContext(orgBad);
+            valid = Validator.TryValidateObject(orgBad, ctx, results, validateAllProperties: true);
+            Assert.IsFalse(valid, "Tampered ACN should fail checksum validation");
+            Assert.IsTrue(results.Any(r => r.ErrorMessage != null && r.ErrorMessage.Contains("ACN must be a valid")));
         }
     }
 }
