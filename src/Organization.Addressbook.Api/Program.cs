@@ -12,12 +12,28 @@ builder.Services.AddDbContext<AddressBookContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection") ?? "Data Source=addressbook.db"));
 
 builder.Services.AddControllers();
+// Add Swagger/OpenAPI only as a development aid
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
-app.UseRouting();
-app.UseEndpoints(endpoints =>
+
+// Configure middleware and top-level route registrations
+if (app.Environment.IsDevelopment())
 {
-    endpoints.MapControllers();
-});
+    app.UseDeveloperExceptionPage();
+
+    // Enable Swagger UI in development only
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseRouting();
+
+// Use top-level route registration for controllers
+app.MapControllers();
 
 app.Run();
+
+// Expose Program class for WebApplicationFactory integration tests
+public partial class Program { }

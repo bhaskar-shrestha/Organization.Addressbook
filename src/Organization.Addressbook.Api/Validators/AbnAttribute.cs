@@ -21,9 +21,11 @@ namespace Organization.Addressbook.Api.Validators
 
         public override bool IsValid(object? value)
         {
-            if (value is null) return false;
+            // If null or empty, consider the value valid here and let [Required]
+            // on the model or DTO enforce presence when necessary.
+            if (value is null) return true;
             var s = value as string;
-            if (string.IsNullOrWhiteSpace(s)) return false;
+            if (string.IsNullOrWhiteSpace(s)) return true;
 
             // Keep only digits
             var digits = new string(s.Where(char.IsDigit).ToArray());
