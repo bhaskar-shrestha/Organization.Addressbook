@@ -11,4 +11,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Organization.Addressbook.Api\Organization.Addressbook.Api.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.0" />
+  </ItemGroup>
 </Project>
