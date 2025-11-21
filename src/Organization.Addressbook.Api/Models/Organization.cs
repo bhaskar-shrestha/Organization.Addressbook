@@ -19,7 +19,6 @@ namespace Organization.Addressbook.Api.Models
         private string? _abn;
         private string? _acn;
 
-        [Required]
         [AbnAttribute(ErrorMessage = "ABN must be a valid 11-digit ABN.")]
         public string? ABN
         {

@@ -14,10 +14,19 @@ builder.Services.AddDbContext<AddressBookContext>(options =>
 builder.Services.AddControllers();
 
 var app = builder.Build();
-app.UseRouting();
-app.UseEndpoints(endpoints =>
+
+// Configure middleware and top-level route registrations
+if (app.Environment.IsDevelopment())
 {
-    endpoints.MapControllers();
-});
+    app.UseDeveloperExceptionPage();
+}
+
+app.UseRouting();
+
+// Use top-level route registration for controllers
+app.MapControllers();
 
 app.Run();
+
+// Expose Program class for WebApplicationFactory integration tests
+public partial class Program { }
