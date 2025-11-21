@@ -67,3 +67,26 @@ Can you add data annotation to define primary keys?
 * Remove references to SQL Server
 * Create a PS command to do the migrations
 * Add this PS command to Readme.md
+
+
+* UI requires create organizations with name and abn or acn only. There is a separate form to add, edit or remove branches to the organization. The branch UI requires minimum 1 address and 1 contact detail.
+* Add API tests for these endpoints
+* Replace UseEndpoints in Program.cs with top-level route registrations
+* Commit and push
+* Add swagger for dev builds only
+* Update README.md with a brief note about how to access Swagger
+* Commit and push
+
+## Swagger (Development only)
+
+- Swagger/OpenAPI documentation is enabled only in the Development environment.
+- When running the API locally in Development, open the browser to `http://localhost:<port>/swagger` or `https://localhost:<port>/swagger` to view the Swagger UI and try endpoints.
+- Start the API with:
+
+```bash
+dotnet run --project src\Organization.Addressbook.Api\Organization.Addressbook.Api.csproj
+```
+
+Replace `<port>` with the port printed by the application on startup (Kestrel will show HTTP/HTTPS URLs in the console).
+
+If you run the app with `ASPNETCORE_ENVIRONMENT=Development`, the Swagger UI will be available; it is intentionally not enabled for non-development environments.
