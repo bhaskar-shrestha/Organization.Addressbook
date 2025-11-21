@@ -12,6 +12,9 @@ builder.Services.AddDbContext<AddressBookContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection") ?? "Data Source=addressbook.db"));
 
 builder.Services.AddControllers();
+// Add Swagger/OpenAPI only as a development aid
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
@@ -19,6 +22,10 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
+
+    // Enable Swagger UI in development only
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseRouting();
