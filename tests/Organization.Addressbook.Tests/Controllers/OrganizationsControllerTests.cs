@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
@@ -59,5 +60,84 @@ namespace Organization.Addressbook.Tests.Controllers
 
             result.Should().BeOfType<NotFoundResult>();
         }
+
+        [Test]
+        public async Task List_ReturnsOk_WithOrganizations()
+        {
+            var mockService = new Mock<IOrganizationService>();
+            var organizations = new List<OrganizationListDto>
+            {
+                new() { Id = Guid.NewGuid(), Name = "Org A", ABN = "11111111111" },
+                new() { Id = Guid.NewGuid(), Name = "Org B", ACN = "123456789" }
+            };
+            mockService.Setup(s => s.ListOrganizationsAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                .ReturnsAsync(Result<List<OrganizationListDto>>.Success(organizations));
+
+            var controller = new OrganizationsController(mockService.Object);
+            var result = await controller.List(null, null, null);
+
+            result.Should().BeOfType<OkObjectResult>();
+            var ok = (OkObjectResult)result;
+            ok.Value.Should().Be(organizations);
+        }
+
+        [Test]
+        public async Task List_PassesFilters_ToService()
+        {
+            var mockService = new Mock<IOrganizationService>();
+            var organizations = new List<OrganizationListDto>();
+            mockService.Setup(s => s.ListOrganizationsAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                .ReturnsAsync(Result<List<OrganizationListDto>>.Success(organizations));
+
+            var controller = new OrganizationsController(mockService.Object);
+            await controller.List("Acme", "111", "222");
+
+            mockService.Verify(s => s.ListOrganizationsAsync("Acme", "111", "222"), Times.Once);
+        }
+
+        [Test]
+        public async Task Search_ReturnsOk_WithResults()
+        {
+            var mockService = new Mock<IOrganizationService>();
+            var organizations = new List<OrganizationListDto>
+            {
+                new() { Id = Guid.NewGuid(), Name = "Acme Tech", ABN = "12345678901" }
+            };
+            mockService.Setup(s => s.SearchOrganizationsAsync(It.IsAny<string>()))
+                .ReturnsAsync(Result<List<OrganizationListDto>>.Success(organizations));
+
+            var controller = new OrganizationsController(mockService.Object);
+            var result = await controller.Search("Acme");
+
+            result.Should().BeOfType<OkObjectResult>();
+            var ok = (OkObjectResult)result;
+            ok.Value.Should().Be(organizations);
+        }
+
+        [Test]
+        public async Task Search_ReturnsBadRequest_WhenQueryIsEmpty()
+        {
+            var mockService = new Mock<IOrganizationService>();
+            var controller = new OrganizationsController(mockService.Object);
+            
+            var result = await controller.Search(null);
+
+            result.Should().BeOfType<BadRequestObjectResult>();
+        }
+
+        [Test]
+        public async Task Search_PassesQuery_ToService()
+        {
+            var mockService = new Mock<IOrganizationService>();
+            var organizations = new List<OrganizationListDto>();
+            mockService.Setup(s => s.SearchOrganizationsAsync(It.IsAny<string>()))
+                .ReturnsAsync(Result<List<OrganizationListDto>>.Success(organizations));
+
+            var controller = new OrganizationsController(mockService.Object);
+            await controller.Search("test123");
+
+            mockService.Verify(s => s.SearchOrganizationsAsync("test123"), Times.Once);
+        }
     }
 }
+

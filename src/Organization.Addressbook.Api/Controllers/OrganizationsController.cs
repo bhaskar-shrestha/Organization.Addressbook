@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Organization.Addressbook.Api.Data;
 using Organization.Addressbook.Api.Dtos;
 using Models = Organization.Addressbook.Api.Models;
+using System;
 using System.Threading.Tasks;
 
 namespace Organization.Addressbook.Api.Controllers
@@ -33,9 +34,37 @@ namespace Organization.Addressbook.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(System.Guid id)
+        public async Task<IActionResult> Get(Guid id)
         {
             var result = await _orgService.GetOrganizationAsync(id);
+            if (result.IsNotFound) return NotFound();
+            if (!result.IsSuccess) return Problem(detail: result.Error);
+            return Ok(result.Value);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> List([FromQuery] string? name, [FromQuery] string? abn, [FromQuery] string? acn)
+        {
+            var result = await _orgService.ListOrganizationsAsync(name, abn, acn);
+            if (!result.IsSuccess) return Problem(detail: result.Error);
+            return Ok(result.Value);
+        }
+
+        [HttpGet("search")]
+        public async Task<IActionResult> Search([FromQuery] string? q)
+        {
+            if (string.IsNullOrWhiteSpace(q))
+                return BadRequest(new { error = "Search query (q) is required" });
+
+            var result = await _orgService.SearchOrganizationsAsync(q);
+            if (!result.IsSuccess) return Problem(detail: result.Error);
+            return Ok(result.Value);
+        }
+
+        [HttpGet("{id}/detail")]
+        public async Task<IActionResult> GetDetail(Guid id)
+        {
+            var result = await _orgService.GetOrganizationDetailAsync(id);
             if (result.IsNotFound) return NotFound();
             if (!result.IsSuccess) return Problem(detail: result.Error);
             return Ok(result.Value);
